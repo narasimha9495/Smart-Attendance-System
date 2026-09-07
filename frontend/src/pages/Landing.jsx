@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api";
 
 const features = [
   ["Proxy-proof", "Face + liveness + in-room code together — no photos, no link-sharing."],
@@ -11,11 +13,36 @@ const features = [
 
 export default function Landing() {
   const nav = useNavigate();
+  const [online, setOnline] = useState(null);
+
+  useEffect(() => {
+    api
+      .get("/health")
+      .then(() => setOnline(true))
+      .catch(() => setOnline(false));
+  }, []);
+
   return (
     <div>
       <section className="hero">
         <div className="hero-inner">
           <span className="pill">MERN · Face Recognition · Geofencing</span>
+
+          <div style={{ marginTop: 10, fontSize: 13, color: "#d7deee" }}>
+            <span
+              style={{
+                display: "inline-block",
+                width: 9,
+                height: 9,
+                borderRadius: "50%",
+                marginRight: 6,
+                background:
+                  online === null ? "#f0ad4e" : online ? "#3ddc84" : "#e05353",
+              }}
+            />
+            {online === null ? "Checking..." : online ? "System online" : "Backend offline"}
+          </div>
+
           <h1>Attendance that can't be faked.</h1>
           <p>
             A proxy-proof attendance platform. A student is marked present only when
@@ -26,7 +53,7 @@ export default function Landing() {
             <button className="btn" onClick={() => nav("/login")}>Get started</button>
             <a
               className="btn ghost"
-              href="https://github.com/"
+              href="https://github.com/narasimha9495/Smart-Attendance-System"
               target="_blank"
               rel="noreferrer"
             >
